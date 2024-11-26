@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{% static 'Training/style.css' %}">
+    <script src="{% static 'Training/update.js' %}"></script> 
     <title>{% block title %}Learning Management System{% endblock %}</title>
 </head>
 <body>
@@ -12,6 +13,7 @@
         <div class="profile-box">
             <div class="css-border">
                 <img src="{% if user.profile_pic %}{{ user.profile_pic.url }}{% else %}{% static 'images/cs50duck.jpg' %}{% endif %}" alt="Profile Picture">
+                {% if user.is_authenticated %}
                 <div class="profile-details">
                     <p>Signed in as, {{ user.username }}!</p>
                     <div>{{ user.profile.name }}</div>
@@ -20,7 +22,7 @@
         </div>
         <ul class="navlink">
             <li><a href="{% url 'index' %}">Home</a></li>
-            <li><a href="#">Log Out</a></li>
+            <li><a href="{% url 'logout' %}">Log Out</a></li>
             <div class="dropdown">
                 <button class="dropbtn">Options</button>
                 <div class="dropdown-content">
@@ -28,8 +30,12 @@
             </div>
         </div>
         </ul>
-
-
+        {% else %}
+        <ul class="nav">
+            <li><a href="{% url 'login' %}?next={{ request.path }}">Log In</a></li>
+            <li><a href="{% url 'register' %}">Register</a></li>
+        </ul>
+        {% endif %}
     </header>
     <main>
         {% block body %}

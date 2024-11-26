@@ -3,6 +3,7 @@ from django.contrib.auth import get_user_model
 from django.utils import timezone
 from datetime import timedelta
 from PyPDF2 import PdfReader
+from django.urls import reverse
 
 # Create your models here.
 User = get_user_model()

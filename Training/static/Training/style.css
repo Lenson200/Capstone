@@ -42,7 +42,8 @@ body {
     padding: 0;
 }
 .navlink li, .nav li {
-    margin: right 50px;
+    margin-right:20px;
+    margin-left: 5px;
     color: #111211;
 }
 .profile-box {
@@ -69,15 +70,31 @@ body {
     height: 150px;
   }
 .profile-details {
-    text-align: left; 
+    text-align: left;
+
 }
 .profile-details p {
-    margin: 0;}
+    margin: 0;
+}
 
 .dropdown {
     position: relative;
     display: inline-block;
 }
+.dropbtn {
+    background-color: #878daa;
+    color: rgb(10, 10, 10);
+    padding: 10px;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+    border-radius: 15px;
+    margin: 0; 
+}
+.dropbtn a:hover {
+    background-color: #76b588;
+    text-decoration: underline;     
+}  
 .dropdown-content {
         display: none;
         position: absolute;
@@ -101,21 +118,41 @@ body {
         font-weight: normal;
         line-height: 1;
         margin: 0.5em 0;
-    }.dropdown-content a:hover {
+    }
+.dropdown-content a:hover {
         background-color: #76b588;
         text-decoration: underline;
     }
-    
-    /* Show the dropdown menu on hover */
+
 .dropdown:hover .dropdown-content {
         display: block;
     }
     @media (max-width: 768px) {
-        .dropdown-content {
-            min-width: 100%; /* Make the dropdown full-width on smaller screens */
+.dropdown-content {
+         min-width: 100%; 
         }
     
-        .dropdown-content a {
-            padding: 0.5em; /* Adjust padding for better fit on small screens */
+.dropdown-content a {
+     padding: 0.5em; 
         }
     }
+.login-message {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 15px;
+        background-color: #28a745; 
+        color: white;
+        border-radius: 5px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        z-index: 1000;
+    }
+.login-message .close-btn {
+        background: none;
+        border: none;
+        color: white;
+        font-size: 16px;
+        float: right;
+        cursor: pointer;
+    }
+    
