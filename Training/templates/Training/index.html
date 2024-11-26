@@ -1,0 +1,10 @@
+{% extends 'Training/Layout.html' %}
+{% load static %}
+{% block body %}
+<div class="search-wrapper">
+    <div id="form-container">
+        <form id="search-form" action="#">
+            <input type="text" name="q" class="search-bar" placeholder="Search for modules" autocomplete="off">
+            <button type="submit" style="display:none;">Search</button>
+        </form>
+{% endblock %}

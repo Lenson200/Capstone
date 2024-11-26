@@ -1,0 +1,39 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'Training/style.css' %}">
+    <title>{% block title %}Learning Management System{% endblock %}</title>
+</head>
+<body>
+    <header class="header">
+        <div class="profile-box">
+            <div class="css-border">
+                <img src="{% if user.profile_pic %}{{ user.profile_pic.url }}{% else %}{% static 'images/cs50duck.jpg' %}{% endif %}" alt="Profile Picture">
+                <div class="profile-details">
+                    <p>Signed in as, {{ user.username }}!</p>
+                    <div>{{ user.profile.name }}</div>
+                    <div>Staff Number: {{ user.profile.staffnumber }}</div>
+                </div>
+        </div>
+        <ul class="navlink">
+            <li><a href="{% url 'index' %}">Home</a></li>
+            <li><a href="#">Log Out</a></li>
+            <div class="dropdown">
+                <button class="dropbtn">Options</button>
+                <div class="dropdown-content">
+                <li><a href="">updateprofile</a></li>
+            </div>
+        </div>
+        </ul>
+
+
+    </header>
+    <main>
+        {% block body %}
+        {% endblock %}
+    </main>
+</body>
+</html>
