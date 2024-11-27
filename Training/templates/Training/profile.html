@@ -1,0 +1,26 @@
+{% extends 'Training/Layout.html' %}
+{% load static %}
+{% block body %}
+<div class="profile-container">
+    <!-- Profile Info Section (Left side) -->
+    <div class="profile-info">
+        <p><strong>Staff Number:</strong> {{ profile.staff_number }}</p>
+        <p><strong>Team:</strong> {{ profile.Team }}</p>
+        <p><strong>Designation:</strong> {{ profile.designation }}</p>
+        <p><strong>Facility:</strong> {{ profile.Facility }}</p>
+        <p><strong>Completed Trainings:</strong> {{ completed_trainings_count }}</p>
+    </div>
+
+    <!-- Profile Update Form Section (Right side) -->
+    <div class="profile-form">
+        <h2 id="profile">Update Profile</h2>
+        <button id="show-form-button">Update Profile</button>
+        
+        <form method="POST" enctype="multipart/form-data" class="profileform">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Update Profile</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

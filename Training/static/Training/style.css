@@ -155,4 +155,49 @@ body {
         float: right;
         cursor: pointer;
     }
+.profile-container {
+        display: flex;          
+        justify-content: space-between;  
+        align-items: flex-start;
+        gap: 20px;               
+    }
     
+.profile-info {
+        flex: 1;                 
+        padding: 20px;           
+        background-color: #f9f9f9; 
+        border-radius: 8px;    
+    }
+    
+.profile-form {
+        flex: 1;                
+        padding: 20px;           
+        background-color: #f9f9f9;
+        border-radius: 8px;    
+        max-width: 500px;
+    }
+    
+.profileform {
+        width: 100%;
+        display: none;
+    }
+    
+.profileform button {
+        margin-top: 20px;
+        padding: 10px 20px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+    }
+    
+.profileform button:hover {
+        background-color: #0056b3;
+    }
+#show-form-button{
+    border: none;
+    border-radius: 5px;
+}
+#show-form-button:hover{
+    background-color: #0056b3;
+}

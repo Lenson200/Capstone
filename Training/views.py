@@ -1,10 +1,11 @@
 from django.shortcuts import render,redirect
 from django.contrib.auth import authenticate,login, logout
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect,Http404
 from django.urls import reverse
-from .models import User
+from .models import User,EmployeeProfile,EmployeeProfile,CompletedTraining
 from django.db import IntegrityError
 from django.http import JsonResponse
+from .forms import EmployeeProfileForm
 
 
 # Create your views here.
@@ -61,3 +62,29 @@ def register(request):
         })
     else:
         return render(request, "Training/register.html")
+
+def profile_view(request):
+    user_instance = request.user
+    try:
+        # get employee profile for the current user
+        profile_instance = EmployeeProfile.objects.get(user=user_instance)
+    except EmployeeProfile.DoesNotExist:
+        raise Http404("Profile not found.")
+    
+    completed_trainings_count = CompletedTraining.objects.filter(employee=profile_instance).count()
+    if request.method == "POST":
+        form = EmployeeProfileForm(request.POST, request.FILES, instance=profile_instance)
+        if form.is_valid():
+            form.save() 
+            return redirect('profileview')  
+    else:
+        form = EmployeeProfileForm(instance=profile_instance)
+
+    context = {
+        'profile': profile_instance,
+        'completed_trainings_count': completed_trainings_count,
+        'form': form,
+    }
+
+    # Render the profile page with the context
+    return render(request, 'Training/profile.html', context)

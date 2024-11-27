@@ -16,8 +16,8 @@
                 {% if user.is_authenticated %}
                 <div class="profile-details">
                     <p>Signed in as, {{ user.username }}!</p>
-                    <div>{{ user.profile.name }}</div>
-                    <div>Staff Number: {{ user.profile.staffnumber }}</div>
+                    <div>Name:{{ profile.name }}</div>
+                    <div>Staff Number: {{ profile.staff_number }}</div>
                 </div>
         </div>
         <ul class="navlink">
@@ -26,7 +26,7 @@
             <div class="dropdown">
                 <button class="dropbtn">Options</button>
                 <div class="dropdown-content">
-                <li><a href="">updateprofile</a></li>
+                    <li><a href="{% url 'profileview' %}">Profile</a></li>
             </div>
         </div>
         </ul>

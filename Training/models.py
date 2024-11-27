@@ -9,6 +9,7 @@ from django.urls import reverse
 User = get_user_model()
 
 class EmployeeProfile(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE,default=0)
     staff_number =models.CharField(max_length=300)
     name = models.CharField(max_length=100)
     Team=models.CharField(max_length=100)
