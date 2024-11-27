@@ -5,7 +5,7 @@ from django.urls import reverse
 from .models import User,EmployeeProfile,EmployeeProfile,CompletedTraining
 from django.db import IntegrityError
 from django.http import JsonResponse
-from .forms import EmployeeProfileForm
+from .forms import EmployeeProfileForm,CompletedTrainingForm,TrainingModuleForm
 
 
 # Create your views here.
@@ -88,3 +88,17 @@ def profile_view(request):
 
     # Render the profile page with the context
     return render(request, 'Training/profile.html', context)
+def add_completed_trainings(request):
+    if request.method == 'POST':
+        form = CompletedTrainingForm(request.POST)
+
+
+def training_module_create(request):
+    if request.method == 'POST':
+        form = TrainingModuleForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('index')
+    else:
+        form = TrainingModuleForm()
+    return render(request, 'Training/training_module_form.html', {'form': form})
