@@ -1,7 +1,7 @@
 from django import forms
 from django.core.exceptions import ValidationError
 from django.core.validators import FileExtensionValidator
-from .models import EmployeeProfile,CompletedTraining,TrainingModule
+from .models import EmployeeProfile,CompletedTraining,TrainingModule,Trainingsrequired
 from django.db.models import Q
 
 MAX_FILE_SIZE_MB = 6
@@ -71,3 +71,12 @@ class CompletedTrainingForm(forms.ModelForm):
             except EmployeeProfile.DoesNotExist:
                 print("No matching employee found.")
                 raise forms.ValidationError("No matching employee found. Please check the input.")
+
+class TrainingsRequiredForm(forms.ModelForm):
+    class Meta:
+        model = Trainingsrequired
+        fields = ['facility', 'Required_Module_trainings']  # Specify fields to include in the form
+        widgets = {
+            'facility': forms.TextInput(attrs={'class': 'form-control'}),
+            'required_module_trainings': forms.NumberInput(attrs={'class': 'form-control'}),
+        }

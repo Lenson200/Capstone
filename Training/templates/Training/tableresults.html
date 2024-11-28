@@ -1,0 +1,14 @@
+{% for result in training_modules %}
+<tr>
+    <td>{{ forloop.counter }}</td>
+    <td><a href="{{ result.url }}">{{ result.name }}</a></td>
+    <td>{{ result.description }}</td>
+    <td>{{ result.facility }}</td>
+    <td>{{ result.created_at }}</td>
+    <td>{{ result.total_pages }}</td>
+</tr>
+{% empty %}
+<tr>
+    <td colspan="6">No results found.</td>
+</tr>
+{% endfor %}

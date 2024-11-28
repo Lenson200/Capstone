@@ -2,12 +2,14 @@ from django.shortcuts import render,redirect,get_object_or_404
 from django.contrib.auth import authenticate,login, logout
 from django.http import HttpResponseRedirect,Http404
 from django.urls import reverse
-from .models import User,EmployeeProfile,EmployeeProfile,CompletedTraining,TrainingModule
+from .models import User,EmployeeProfile,EmployeeProfile,CompletedTraining,TrainingModule,Trainingsrequired
 from django.db import IntegrityError
 from django.http import JsonResponse
-from .forms import EmployeeProfileForm,CompletedTrainingForm,TrainingModuleForm
+from .forms import EmployeeProfileForm,CompletedTrainingForm,TrainingModuleForm,TrainingsRequiredForm
 from PyPDF2 import PdfReader
 import os
+from django.template.loader import render_to_string
+from django.db.models import Q
 # Create your views here.
 def index(request):
     return render(request,'Training/index.html')
@@ -108,11 +110,12 @@ def training_module_delete(request, pk):
         training_module.delete()
         return redirect('index') 
 
-    return render(request, 'Training/training_module_confirm_delete.html', {'training_module': training_module})
+    return render(request, 'Training/training_module_confirm_delete.html', {'training_module': training_module,})
 
 def training_module_list(request):
     training_modules = TrainingModule.objects.all()
     return render(request, 'Training/training_module_list.html', {'training_modules': training_modules})
+
 
 
 def training_module_detail(request, pk):
@@ -182,7 +185,24 @@ def employee_trainings(request, employee_id):
         'completed_trainings': completed_trainings,
 
         })
+def update_trainings_required(request):
+    # Retrieve the specific TrainingsRequired record by its ID (pk)
+    training = get_object_or_404(Trainingsrequired)
 
+    if request.method == 'POST':
+        form = TrainingsRequiredForm(request.POST, instance=training)
+        if form.is_valid():
+            form.save()  # Save the updated record
+            return redirect('index')  # Redirect to a page that lists all records or a success page
+    else:
+        form = TrainingsRequiredForm(instance=training)
+
+    return render(request, 'Training/update_trainings_required.html', {'form': form})
 
 def view_completed_trainings(request):
     completed_trainings = CompletedTraining.objects.select_related('employee', 'training_module').all()
+
+
+def search(request):
+    query = request.GET.get('q')
+    results = []

@@ -2,27 +2,27 @@
 {% load static %}
 {% block body %}
 <h1>Training Modules</h1>
- <class="module-list">
-    <table>
-        <thead>
-            <tr>
-                <th>Sr.No</th>
-                <th>Title</th>
-                <th>Description</th>
-                <th>Code</th>
-                <th>Category</th>
-                <th>File</th>
-                <th>Facility</th>
-                <th>Created At</th>
-                <th>Total Pages</th>
-            </tr>
-        </thead>
-        <tbody>
-    {% for module in training_modules %}
-    <tr>
-        <td>{{ forloop.counter }}</td>
 
-        <td><a href="{% url 'training_module_detail' module.pk %}">{{ module.title }}</a></td>
+<table id="module-table">
+    <thead>
+        <tr>
+            <th>Sr.No</th>
+            <th>Title</th>
+            <th>Description</th>
+            <th>Code</th>
+            <th>Category</th>
+            <th>File</th>
+            <th>Facility</th>
+            <th>Created At</th>
+            <th>Total Pages</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody id="module-table-body">
+        {% for module in training_modules %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td><a href="{% url 'training_module_detail' module.pk %}">{{ module.title }}</a></td>
                 <td>{{ module.description }}</td>
                 <td>{{ module.code }}</td>
                 <td>{{ module.category }}</td>
@@ -32,15 +32,22 @@
                     {% else %}
                         No file uploaded
                     {% endif %}
+                </td>
                 <td>{{ module.facility }}</td>
                 <td>{{ module.created_at }}</td>
                 <td>{{ module.total_pages }}</td>
+                <td>
+                    <a href="{% url 'training_module_delete' module.pk %}">Delete</a>
+                    <a href="{% url 'addmodules' %}">Add Module</a>
+                    <a href="{% url 'training_module_detail' module.pk %}">View Details</a>
+                </td>
             </tr>
-            {% empty %}
+        {% empty %}
             <tr>
                 <td colspan="9">No training modules available.</td>
             </tr>
-    {% endfor %}
-</tbody>
+        {% endfor %}
+    </tbody>
 </table>
+
 {% endblock %}

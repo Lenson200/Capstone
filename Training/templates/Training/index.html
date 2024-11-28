@@ -7,6 +7,7 @@
             <input type="text" name="q" class="search-bar" placeholder="Search for modules" autocomplete="off">
             <button type="submit" style="display:none;">Search</button>
         </form>
-        <a href="addmodules">
-    <button id="form-button">add training modules</button></a>
+   
+<a href="{% url 'addmodules' %}">
+    <button id="form-button">add training modules</button></a>   
 {% endblock %}
