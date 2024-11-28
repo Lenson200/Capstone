@@ -208,3 +208,37 @@ body {
     border-radius: 15px;
     padding: 10px 20px;
 }
+th, td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+}
+
+th {
+    background-color: #059600;
+    color: white;
+    font-size: 16px;
+}
+
+tr:nth-child(even) {
+    background-color: #f8f8f8;
+}
+
+tr:hover {
+    background-color: #f1f1f1;
+}
+
+td {
+    font-size: 14px;
+    color: #333;
+}
+.table th, .table td {
+    padding: 12px;
+    text-align: center;
+    border: 1px solid #ddd;
+}
+.table tbody tr:hover {
+    background-color: #89eee9;
+}

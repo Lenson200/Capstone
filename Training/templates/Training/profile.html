@@ -8,7 +8,13 @@
         <p><strong>Team:</strong> {{ profile.Team }}</p>
         <p><strong>Designation:</strong> {{ profile.designation }}</p>
         <p><strong>Facility:</strong> {{ profile.Facility }}</p>
-        <p><strong>Completed Trainings:</strong> {{ completed_trainings_count }}</p>
+        <p>
+            <strong>Completed Trainings:</strong>
+            <a href="{% url 'employee_trainings' employee_id %}">{{ completed_trainings_count }}</a>
+        </p>
+        <p>
+            <strong>Read Modules:</strong>
+        </p>
     </div>
 
     <!-- Profile Update Form Section (Right side) -->

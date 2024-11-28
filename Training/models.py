@@ -16,6 +16,13 @@ class EmployeeProfile(models.Model):
     designation=models.CharField(max_length=100,default="Technician")
     Facility=models.CharField(max_length=100)
     profile_pic = models.ImageField(upload_to='Training/profile_pics', blank=True, null=True)
+
+    def __str__(self):
+        return f"{self.employee.staff_number} - {self.employee.name} "
+
+    def count_completed_trainings(self):
+        """Returns the count of completed trainings employee."""
+        return self.completed_trainings.filter(date_completed__isnull=False).count()
     
 class TrainingModule(models.Model):
     title = models.CharField(max_length=200)
@@ -40,6 +47,7 @@ class TrainingModule(models.Model):
 
     def get_absolute_url(self):
         return reverse('training_module_detail',args=[str(self.pk)])
+    
 class CompletedTraining(models.Model):
     employee = models.ForeignKey('EmployeeProfile', on_delete=models.CASCADE, related_name='completed_trainings')
     training_module = models.ForeignKey('TrainingModule', on_delete=models.CASCADE, related_name='completed_by_profiles')

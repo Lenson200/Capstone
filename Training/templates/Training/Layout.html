@@ -26,8 +26,10 @@
             <div class="dropdown">
                 <button class="dropbtn">Options</button>
                 <div class="dropdown-content">
+                    <li><a href="{% url 'training_module_list' %}">Training Modules</a></li>
                     <li><a href="{% url 'profileview' %}">Profile</a></li>
             </div>
+            <li><a href="{% url 'add_completed_training' %}">add completed trainings</a></li> 
         </div>
         </ul>
         {% else %}

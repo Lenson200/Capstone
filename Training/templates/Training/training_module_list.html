@@ -1,0 +1,46 @@
+{% extends 'Training/Layout.html' %}
+{% load static %}
+{% block body %}
+<h1>Training Modules</h1>
+ <class="module-list">
+    <table>
+        <thead>
+            <tr>
+                <th>Sr.No</th>
+                <th>Title</th>
+                <th>Description</th>
+                <th>Code</th>
+                <th>Category</th>
+                <th>File</th>
+                <th>Facility</th>
+                <th>Created At</th>
+                <th>Total Pages</th>
+            </tr>
+        </thead>
+        <tbody>
+    {% for module in training_modules %}
+    <tr>
+        <td>{{ forloop.counter }}</td>
+
+        <td><a href="{% url 'training_module_detail' module.pk %}">{{ module.title }}</a></td>
+                <td>{{ module.description }}</td>
+                <td>{{ module.code }}</td>
+                <td>{{ module.category }}</td>
+                <td>
+                    {% if module.file %}
+                        <a href="{{ module.file.url }}" target="_blank">Download</a>
+                    {% else %}
+                        No file uploaded
+                    {% endif %}
+                <td>{{ module.facility }}</td>
+                <td>{{ module.created_at }}</td>
+                <td>{{ module.total_pages }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="9">No training modules available.</td>
+            </tr>
+    {% endfor %}
+</tbody>
+</table>
+{% endblock %}

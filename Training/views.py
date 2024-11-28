@@ -1,13 +1,13 @@
-from django.shortcuts import render,redirect
+from django.shortcuts import render,redirect,get_object_or_404
 from django.contrib.auth import authenticate,login, logout
 from django.http import HttpResponseRedirect,Http404
 from django.urls import reverse
-from .models import User,EmployeeProfile,EmployeeProfile,CompletedTraining
+from .models import User,EmployeeProfile,EmployeeProfile,CompletedTraining,TrainingModule
 from django.db import IntegrityError
 from django.http import JsonResponse
 from .forms import EmployeeProfileForm,CompletedTrainingForm,TrainingModuleForm
-
-
+from PyPDF2 import PdfReader
+import os
 # Create your views here.
 def index(request):
     return render(request,'Training/index.html')
@@ -84,13 +84,11 @@ def profile_view(request):
         'profile': profile_instance,
         'completed_trainings_count': completed_trainings_count,
         'form': form,
+        'employee_id': profile_instance.id  
     }
 
     # Render the profile page with the context
     return render(request, 'Training/profile.html', context)
-def add_completed_trainings(request):
-    if request.method == 'POST':
-        form = CompletedTrainingForm(request.POST)
 
 
 def training_module_create(request):
@@ -102,3 +100,89 @@ def training_module_create(request):
     else:
         form = TrainingModuleForm()
     return render(request, 'Training/training_module_form.html', {'form': form})
+
+def training_module_delete(request, pk):
+    training_module = get_object_or_404(TrainingModule, pk=pk)
+
+    if request.method == 'POST':
+        training_module.delete()
+        return redirect('index') 
+
+    return render(request, 'Training/training_module_confirm_delete.html', {'training_module': training_module})
+
+def training_module_list(request):
+    training_modules = TrainingModule.objects.all()
+    return render(request, 'Training/training_module_list.html', {'training_modules': training_modules})
+
+
+def training_module_detail(request, pk):
+    training_module = get_object_or_404(TrainingModule, pk=pk)
+    if training_module.file:
+        file_extension = os.path.splitext(training_module.file.name)[1].lower()
+        if file_extension == '.pdf':
+            with open(training_module.file.path, 'rb') as f:
+                pdf_reader = PdfReader(f)
+                num_pages = len(pdf_reader.pages)
+
+            if training_module.total_pages != num_pages:
+                training_module.total_pages = num_pages
+                training_module.save()
+
+    return render(request, 'Training/training_module_detail.html', {
+        'training_module': training_module,
+        'page_range': range(1, training_module.total_pages + 1) if training_module.total_pages else None
+    })
+
+
+
+
+
+def add_completed_trainings(request):
+    if request.method == 'POST':
+        form = CompletedTrainingForm(request.POST)
+        if form.is_valid():
+            employee = form.cleaned_data['employee_input']
+            training_module = form.cleaned_data['training_module']
+            date_completed = form.cleaned_data['date_completed']
+            #before saving check if the record exists
+            completed_training = CompletedTraining.objects.filter(
+                employee=employee, training_module=training_module
+            ).first()
+
+            if completed_training:
+                # Update the existing record
+                completed_training.date_completed = date_completed
+                completed_training.save()
+                form.add_error(
+                    None, 
+                    f'This employee has already completed this training module. The completion date has been updated to {date_completed}.'
+                )
+            else:
+                # Create a new record
+                completed_training = form.save(commit=False)
+                completed_training.employee = employee
+                completed_training.save()
+                return redirect('add_completed_training')
+    else:
+        form = CompletedTrainingForm()
+        context = {
+        'form': form,
+    }
+    return render(request, 'Training/add_completed_training.html',context)
+
+
+def employee_trainings(request, employee_id):
+    employee = get_object_or_404(EmployeeProfile, pk=employee_id)
+    completed_trainings = employee.completed_trainings.all()
+    completed_trainings_count = employee.count_completed_trainings()
+
+    return render(request, 'Training/Completed_training_details.html', {
+        'employee': employee,
+        'employee_id': employee_id,
+        'completed_trainings': completed_trainings,
+
+        })
+
+
+def view_completed_trainings(request):
+    completed_trainings = CompletedTraining.objects.select_related('employee', 'training_module').all()
