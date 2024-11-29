@@ -2,6 +2,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const showFormButton = document.getElementById('show-form-button');
     const profileForm = document.querySelector('.profileform');
     const loginForm = document.querySelector('#login-form');
+    const submitButton = document.getElementById('submit-button');
+    const trainingModuleId = document.getElementById('training_module_id').value;
+    const messageDiv = document.getElementById('message');
     
     if (loginForm) {
         loginForm.addEventListener('submit', (event) => {
@@ -39,61 +42,62 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
     }
-    showFormButton.addEventListener('click', () => {
-        showFormButton.style.display = 'none'; 
-        profileForm.style.display = 'block'; 
-    });
     
-    // Hide form and show button after form submission
-    profileForm.addEventListener('submit', () => {
-        setTimeout(() => {
-            profileForm.style.display = 'none'; 
-            showFormButton.style.display = 'block'; 
-        }, 100);
-    });
+    const toggleTrainingStatus = () => {
+        fetch(`toggle-training-status/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                training_module_id: trainingModuleId,
+                trainee_id: traineeId,
+            }),
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Update button text based on new status
+                submitButton.textContent = data.is_completed
+                    ? 'Mark Module Incomplete'
+                    : 'Mark Module Complete';
 
-    
-    
+                // Show success message
+                messageDiv.textContent = data.message;
+                messageDiv.style.display = 'block';
+                messageDiv.style.color = 'green';
+            } else {
+                // Show error message
+                messageDiv.textContent = data.message;
+                messageDiv.style.display = 'block';
+                messageDiv.style.color = 'red';
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            messageDiv.textContent = 'An error occurred. Please try again.';
+            messageDiv.style.display = 'block';
+            messageDiv.style.color = 'red';
+        });
+    };
+
+    // Add click event listener to the button
+    submitButton.addEventListener('click', toggleTrainingStatus);
+
+
+   
 });
+   
 
- 
-// searchInput.addEventListener('input', () => {
-//     const query = searchInput.value;
-//     if (!query.trim()) {
-//         return; // Do nothing if the query is empty
-//     }
-
-//     urlElements.forEach(urlElement => {
-//         const url = urlElement.getAttribute('data-url'); 
-        
-//         // Example: Log the URL for each module
-//         console.log('Module URL:', url);
-
-//          if (!url) {
-//             console.error('URL attribute is missing for this element!');
-//             return;
-//         }
-
-//     // Use the URL and append the query parameter
-//     fetch(`${url}?q=${encodeURIComponent(query)}`, {
-//         method: 'GET',
-//         headers: {
-//             'X-Requested-With': 'XMLHttpRequest',  // Add this header explicitly
-//         }
-//     })
-//     .then(response => {
-//         if (!response.ok) {
-//             throw new Error('Network response was not ok');
-//         }
-//         return response.json();
-//     })
-//     .then(data => {
-//         if (data.html) {
-//             moduleTableBody.innerHTML = data.html; // Update the table body with the results
-//         }
-//     })
-//     .catch(error => {
-//         console.error('Error fetching data:', error);
-//     });
+// showFormButton.addEventListener('click', () => {
+//     showFormButton.style.display = 'none'; 
+//     profileForm.style.display = 'block'; 
 // });
+
+// // Hide form and show button after form submission
+// profileForm.addEventListener('submit', () => {
+//     setTimeout(() => {
+//         profileForm.style.display = 'none'; 
+//         showFormButton.style.display = 'block'; 
+//     }, 100);
 // });

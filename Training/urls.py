@@ -14,5 +14,10 @@ urlpatterns = [
    path('training_module/<int:pk>/delete/', views.training_module_delete, name='training_module_delete'),
     path('training-modules/<int:pk>/', views.training_module_detail, name='training_module_detail'),
     path('update_trainings_required/', views.update_trainings_required, name='update_trainings_required'),
+    path('completed-trainings/', views.view_completed_trainings, name='view_completed_trainings'),
+    path('employee/<int:employee_id>/', views.employee_trainings, name='employee_trainings'),
+    path('categories/',views.category_list, name='category_list'),
+    path('category/<str:category>/', views.category_detail, name='category_detail'),
+    path('training-modules/<int:training_module_id>/toggle-training-status/',views.toggle_training_status, name='toggle_training_status'),
 
 ]

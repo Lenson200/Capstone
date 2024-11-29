@@ -75,8 +75,10 @@ class CompletedTrainingForm(forms.ModelForm):
 class TrainingsRequiredForm(forms.ModelForm):
     class Meta:
         model = Trainingsrequired
-        fields = ['facility', 'Required_Module_trainings']  # Specify fields to include in the form
+        fields = ['facility', 'Required_Module_trainings','Category'] 
         widgets = {
             'facility': forms.TextInput(attrs={'class': 'form-control'}),
             'required_module_trainings': forms.NumberInput(attrs={'class': 'form-control'}),
+            'Category': forms.TextInput(attrs={'class': 'form-control'}),
+           
         }

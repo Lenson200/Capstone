@@ -278,3 +278,89 @@ td {
     background-color: #1ac74b;
     text-decoration: underline;
 }
+ul {
+    padding: 0;
+    margin: 0;
+    list-style-type: none;
+}
+.category-action {
+    margin-bottom: 20px;
+}
+
+.category-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    justify-content: center;
+}
+
+.category-list li {
+    background-color: #f4f4f4;
+    padding: 10px 20px;
+    border-radius: 25px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.category-list li a {
+    text-decoration: none;
+    color: #333;
+    font-weight: bold;
+    font-size: 16px;
+    text-transform: capitalize;
+}
+
+.category-list li:hover {
+    background-color: #008CBA;
+    transform: scale(1.05);
+}
+
+.category-list li:hover a {
+    color: #fff;
+}
+
+
+.module-list {
+    margin-top: 30px;
+    padding: 0;
+}
+
+.module-list li {
+    background-color: #fafafa;
+    border: 1px solid #ddd;
+    padding: 15px;
+    margin-bottom: 15px;
+    border-radius: 8px;
+    transition: transform 0.3s ease, background-color 0.3s ease;
+}
+
+.module-list li a {
+    color: #008CBA;
+    font-size: 18px;
+    font-weight: bold;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.module-list li p {
+    font-size: 14px;
+    color: #666;
+    margin-top: 10px;
+}
+
+.module-list li:hover {
+    background-color: #e9f7ff;
+    transform: translateY(-5px);
+}
+
+.module-list li a:hover {
+    color: #005f73;
+}
+
+/* Empty state message */
+.module-list p {
+    font-style: italic;
+    color: #888;
+    text-align: center;
+    padding: 20px;
+    font-size: 16px;
+}

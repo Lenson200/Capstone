@@ -17,7 +17,7 @@
                 <div class="profile-details">
                     <p>Signed in as, {{ user.username }}!</p>
                     <div>Name:{{ profile.name }}</div>
-                    <div>Staff Number: {{ profile.staff_number }}</div>
+                    <div>Staff Number:{{profile.staff_number }}</div>
                 </div>
         </div>
         <ul class="navlink">
@@ -27,11 +27,13 @@
                 <button class="dropbtn">Options</button>
                 <div class="dropdown-content">
                     <li><a href="{% url 'training_module_list' %}">Training Modules</a></li>
+                    <li><a href="{% url 'category_list' %}">Categories</a></li>
                     <li><a href="{% url 'profileview' %}">Profile</a></li>
             </div>
         </div>
         <li><a href="{% url 'add_completed_training' %}">add completed trainings</a></li> 
-        <li><a href="#">Required trainings</a></li>
+        <li><a href="{% url 'update_trainings_required' %}">Required trainings</a></li>
+        <li><a href="{% url 'view_completed_trainings' %}">all staff trainings</a></li>
         </ul>
         {% else %}
         <ul class="nav">

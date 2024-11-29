@@ -10,9 +10,16 @@ from PyPDF2 import PdfReader
 import os
 from django.template.loader import render_to_string
 from django.db.models import Q
+from django.core.paginator import Paginator
+import json
+from django.views.decorators.csrf import csrf_exempt
 # Create your views here.
 def index(request):
-    return render(request,'Training/index.html')
+    user_instance = request.user
+    profile_instance = EmployeeProfile.objects.get(user=user_instance)
+    context={'profile': profile_instance,}
+    
+    return render(request,'Training/index.html',context)
 
 ###########################ACCOUNT REGISTRATION AND PROFILE HANDLING############################
 def login_view(request):
@@ -136,10 +143,6 @@ def training_module_detail(request, pk):
         'page_range': range(1, training_module.total_pages + 1) if training_module.total_pages else None
     })
 
-
-
-
-
 def add_completed_trainings(request):
     if request.method == 'POST':
         form = CompletedTrainingForm(request.POST)
@@ -178,30 +181,68 @@ def employee_trainings(request, employee_id):
     employee = get_object_or_404(EmployeeProfile, pk=employee_id)
     completed_trainings = employee.completed_trainings.all()
     completed_trainings_count = employee.count_completed_trainings()
-
+    
     return render(request, 'Training/Completed_training_details.html', {
         'employee': employee,
         'employee_id': employee_id,
         'completed_trainings': completed_trainings,
 
         })
-def update_trainings_required(request):
-    # Retrieve the specific TrainingsRequired record by its ID (pk)
-    training = get_object_or_404(Trainingsrequired)
 
+def update_trainings_required(request):
     if request.method == 'POST':
-        form = TrainingsRequiredForm(request.POST, instance=training)
+        form = TrainingsRequiredForm(request.POST)
         if form.is_valid():
-            form.save()  # Save the updated record
-            return redirect('index')  # Redirect to a page that lists all records or a success page
+            form.save() 
+            return redirect('index') 
     else:
-        form = TrainingsRequiredForm(instance=training)
+        form = TrainingsRequiredForm()
 
     return render(request, 'Training/update_trainings_required.html', {'form': form})
 
 def view_completed_trainings(request):
-    completed_trainings = CompletedTraining.objects.select_related('employee', 'training_module').all()
+    employees=EmployeeProfile.objects.all().order_by('staff_number')
+    return render(request, 'Training/staff_completed_trainings.html', {'employees': employees})
+def category_list(request):
+    categories = TrainingModule.objects.values_list('category', flat=True).distinct()
+    return render(request, 'Training/categories.html', {'categories': categories})
 
+def category_detail(request, category):
+    modules = TrainingModule.objects.filter(category__iexact=category)
+    return render(request, 'Training/category_detail.html', {
+        'category': category,
+        'training_modules': modules
+    })
+@csrf_exempt
+def toggle_training_status(request,training_module_id):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            training_module_id = data.get('training_module_id')
+            trainee_id = data.get('trainee_id')
+
+            # Fetch the training module and trainee record
+            training = TrainingModule.objects.get(id=training_module_id, trainee__id=trainee_id)
+
+            # Toggle the completion status
+            training.is_completed = not training.is_completed
+            training.save()
+
+            return JsonResponse({
+                'success': True,
+                'is_completed': training.is_completed,
+                'message': f"Training status updated to {'Complete' if training.is_completed else 'Incomplete'}."
+            })
+        except TrainingModule.DoesNotExist:
+            return JsonResponse({
+                'success': False,
+                'message': 'Training module not found.'
+            })
+        except Exception as e:
+            return JsonResponse({
+                'success': False,
+                'message': str(e),
+            })
 
 def search(request):
     query = request.GET.get('q')

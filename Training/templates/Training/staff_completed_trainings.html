@@ -1,0 +1,37 @@
+{% extends 'Training/Layout.html' %}
+{% load static %}
+{% block body %}
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Serial No.</th> 
+            <th>Name</th>
+            <th>Staff Number</th>
+            <th>designation</th>
+            <th>Team</th>
+            <th>Facility</th>
+            <th>completed trainings</th>
+        </tr>
+    </thead>
+    <tbody>
+       
+        {% for employee in employees %}
+        <tr>
+            <td>{{ forloop.counter }}</td>
+            <td><a href="{% url 'profileview' %}">{{ employee.name }}</a></td>
+            <td>{{ employee.staff_number }}</td>
+            <td>{{ employee.designation }}</td>
+            <td>{{ employee.Team}}</td>
+            <td>{{ employee.Facility}}</td>
+            <td><a href="{% url 'employee_trainings' employee.id %}">{{employee.count_completed_trainings}}</a></td>
+          
+        </tr>
+
+    {% empty %}
+    <tr>
+        <td colspan="7">No employees found.</td>
+    </tr>
+    {% endfor %}
+    </tbody>
+     
+{% endblock %}

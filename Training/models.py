@@ -19,21 +19,22 @@ class EmployeeProfile(models.Model):
     required_trainings = models.ForeignKey('TrainingsRequired', on_delete=models.CASCADE, null=True, blank=True)
 
     def __str__(self):
-        return f"{self.employee.staff_number} - {self.employee.name} "
+      return f"{self.staff_number} - {self.name} {self.required_trainings}"
 
     def count_completed_trainings(self):
         """Returns the count of completed trainings employee."""
         return self.completed_trainings.filter(date_completed__isnull=False).count()
-    def update_trainings_required(self):
-        """Update the required trainings when facility is changed."""
-        try:
-            # Find the required trainings for the new facility
-            required_trainings = Trainingsrequired.objects.get(facility=self.facility)
-            self.required_trainings = required_trainings
-            self.save()
-        except Trainingsrequired.DoesNotExist:
-            pass 
     
+    def save(self, *args, **kwargs):
+        # Automatically update required trainings based on Facility
+        try:
+            required_training = Trainingsrequired.objects.get(facility=self.Facility)
+            self.required_trainings = required_training
+        except Trainingsrequired.DoesNotExist:
+            self.required_trainings = None
+
+        super().save(*args, **kwargs)
+        
 class TrainingModule(models.Model):
     title = models.CharField(max_length=200)
     description = models.TextField()
@@ -77,6 +78,7 @@ class CompletedTraining(models.Model):
 class Trainingsrequired(models.Model):
     facility = models.CharField(max_length=20)
     Required_Module_trainings = models.IntegerField(default=18)
+    Category=models.CharField(max_length=50)
 
     def __str__(self):
         return f"Facility: {self.facility} - Required Trainings: {self.Required_Module_trainings}"
