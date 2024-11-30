@@ -9,14 +9,18 @@ from django.urls import reverse
 User = get_user_model()
 
 class EmployeeProfile(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE,default=0)
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
     staff_number =models.CharField(max_length=300)
     name = models.CharField(max_length=100)
     Team=models.CharField(max_length=100)
     designation=models.CharField(max_length=100,default="Technician")
     Facility=models.CharField(max_length=100)
     profile_pic = models.ImageField(upload_to='Training/profile_pics', blank=True, null=True)
-    required_trainings = models.ForeignKey('TrainingsRequired', on_delete=models.CASCADE, null=True, blank=True)
+    required_trainings = models.ForeignKey('TrainingsRequired', on_delete=models.CASCADE, null=True, blank=True)  
+    def is_manager(self):
+        return any(keyword in self.designation.lower() for keyword in ['manager', 'reporting', 'Training Officer'])
+    def is_reporting(self):
+        return self.designation.lower() == 'Training Officer'
 
     def __str__(self):
       return f"{self.staff_number} - {self.name} {self.required_trainings}"
@@ -24,6 +28,7 @@ class EmployeeProfile(models.Model):
     def count_completed_trainings(self):
         """Returns the count of completed trainings employee."""
         return self.completed_trainings.filter(date_completed__isnull=False).count()
+   
     
     def save(self, *args, **kwargs):
         # Automatically update required trainings based on Facility

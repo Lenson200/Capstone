@@ -9,16 +9,18 @@
     <title>{% block title %}Learning Management System{% endblock %}</title>
 </head>
 <body>
+
     <header class="header">
         <div class="profile-box">
             <div class="css-border">
-                <img src="{% if user.profile_pic %}{{ user.profile_pic.url }}{% else %}{% static 'images/cs50duck.jpg' %}{% endif %}" alt="Profile Picture">
+                <img src="{% if user.profile_pic %}{{ profile.profile_pic.url }}{% else %}{% static 'images/cs50duck.jpg' %}{% endif %}" alt="Profile Picture">
                 {% if user.is_authenticated %}
+                <p>Signed in as, {{ user.username }}!</p>
                 <div class="profile-details">
-                    <p>Signed in as, {{ user.username }}!</p>
-                    <div>Name:{{ profile.name }}</div>
-                    <div>Staff Number:{{profile.staff_number }}</div>
+                    <div>Name: {{ profile.name }}</div>
+                    <div>Staff Number: {{ profile.staff_number }}</div>
                 </div>
+            </div>
         </div>
         <ul class="navlink">
             <li><a href="{% url 'index' %}">Home</a></li>
@@ -29,11 +31,24 @@
                     <li><a href="{% url 'training_module_list' %}">Training Modules</a></li>
                     <li><a href="{% url 'category_list' %}">Categories</a></li>
                     <li><a href="{% url 'profileview' %}">Profile</a></li>
+                </div>
             </div>
-        </div>
-        <li><a href="{% url 'add_completed_training' %}">add completed trainings</a></li> 
-        <li><a href="{% url 'update_trainings_required' %}">Required trainings</a></li>
-        <li><a href="{% url 'view_completed_trainings' %}">all staff trainings</a></li>
+            {% if profile.is_reporting %}
+            <div class="reporting-options">
+                <a href="{% url 'addmodules' %}">
+                    <button class="btn">Add Training Modules</button>
+                </a>
+                <a href="{% url 'add_completed_training' %}">
+                    <button class="btn">Add Completed Trainings</button>
+                </a>
+                <a href="{% url 'update_trainings_required' %}">
+                    <button class="btn">Update Required Trainings</button>
+                </a>
+                <a href="{% url 'view_completed_trainings' %}">
+                    <button class="btn">View All Staff Trainings</button>
+                </a>
+            </div>
+            {% endif %}
         </ul>
         {% else %}
         <ul class="nav">
@@ -42,6 +57,7 @@
         </ul>
         {% endif %}
     </header>
+    
     <main>
         {% block body %}
         {% endblock %}

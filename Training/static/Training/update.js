@@ -2,10 +2,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const showFormButton = document.getElementById('show-form-button');
     const profileForm = document.querySelector('.profileform');
     const loginForm = document.querySelector('#login-form');
-    const submitButton = document.getElementById('submit-button');
-    const trainingModuleId = document.getElementById('training_module_id').value;
-    const messageDiv = document.getElementById('message');
-    
+  
     if (loginForm) {
         loginForm.addEventListener('submit', (event) => {
             event.preventDefault(); // Prevents the default form submission
@@ -42,62 +39,65 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
     }
+    showFormButton.addEventListener('click', () => {
+        showFormButton.style.display = 'none'; 
+        profileForm.style.display = 'block'; 
+    });
     
-    const toggleTrainingStatus = () => {
-        fetch(`toggle-training-status/`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                training_module_id: trainingModuleId,
-                trainee_id: traineeId,
-            }),
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                // Update button text based on new status
-                submitButton.textContent = data.is_completed
-                    ? 'Mark Module Incomplete'
-                    : 'Mark Module Complete';
-
-                // Show success message
-                messageDiv.textContent = data.message;
-                messageDiv.style.display = 'block';
-                messageDiv.style.color = 'green';
-            } else {
-                // Show error message
-                messageDiv.textContent = data.message;
-                messageDiv.style.display = 'block';
-                messageDiv.style.color = 'red';
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            messageDiv.textContent = 'An error occurred. Please try again.';
-            messageDiv.style.display = 'block';
-            messageDiv.style.color = 'red';
-        });
-    };
-
-    // Add click event listener to the button
-    submitButton.addEventListener('click', toggleTrainingStatus);
+    // Hide form and show button after form submission
+    profileForm.addEventListener('submit', () => {
+        setTimeout(() => {
+            profileForm.style.display = 'none'; 
+            showFormButton.style.display = 'block'; 
+        }, 100);
+    });
+    
+   
 
 
    
 });
    
 
-// showFormButton.addEventListener('click', () => {
-//     showFormButton.style.display = 'none'; 
-//     profileForm.style.display = 'block'; 
-// });
+// const submitButton = document.getElementById('submit-button');
+// const trainingModuleId = document.getElementById('training_module_id').value;
+// const messageDiv = document.getElementById('message');
+// const toggleTrainingStatus = () => {
+//     fetch(`toggle-training-status/`, {
+//         method: 'POST',
+//         headers: {
+//             'Content-Type': 'application/json',
+//         },
+//         body: JSON.stringify({
+//             training_module_id: trainingModuleId,
+//         }),
+//     })
+//     .then(response => response.json())
+//     .then(data => {
+//         if (data.success) {
+//             // Update button text based on new status
+//             submitButton.textContent = data.is_completed
+//                 ? 'Mark Module Incomplete'
+//                 : 'Mark Module Complete';
 
-// // Hide form and show button after form submission
-// profileForm.addEventListener('submit', () => {
-//     setTimeout(() => {
-//         profileForm.style.display = 'none'; 
-//         showFormButton.style.display = 'block'; 
-//     }, 100);
-// });
+//             // Show success message
+//             messageDiv.textContent = data.message;
+//             messageDiv.style.display = 'block';
+//             messageDiv.style.color = 'green';
+//         } else {
+//             // Show error message
+//             messageDiv.textContent = data.message;
+//             messageDiv.style.display = 'block';
+//             messageDiv.style.color = 'red';
+//         }
+//     })
+//     .catch(error => {
+//         console.error('Error:', error);
+//         messageDiv.textContent = 'An error occurred. Please try again.';
+//         messageDiv.style.display = 'block';
+//         messageDiv.style.color = 'red';
+//     });
+// };
+
+// // Add click event listener to the button
+// submitButton.addEventListener('click', toggleTrainingStatus);

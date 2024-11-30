@@ -15,11 +15,12 @@ import json
 from django.views.decorators.csrf import csrf_exempt
 # Create your views here.
 def index(request):
-    user_instance = request.user
-    profile_instance = EmployeeProfile.objects.get(user=user_instance)
-    context={'profile': profile_instance,}
-    
-    return render(request,'Training/index.html',context)
+    return render(request,'Training/index.html')
+
+
+def segregation(request):
+    profile_instance = get_object_or_404(EmployeeProfile, user=request.user)
+    return render(request, 'Training/Layout.html', {'profile': profile_instance})
 
 ###########################ACCOUNT REGISTRATION AND PROFILE HANDLING############################
 def login_view(request):
@@ -66,9 +67,8 @@ def register(request):
                 "message": "Username already taken."
             })
         login(request, user)
-        return render(request, "Training/register.html", {
-            "message": "Registration successful! You are now logged in."
-        })
+        return HttpResponseRedirect(reverse("index"))
+       
     else:
         return render(request, "Training/register.html")
 
@@ -78,13 +78,15 @@ def profile_view(request):
         # get employee profile for the current user
         profile_instance = EmployeeProfile.objects.get(user=user_instance)
     except EmployeeProfile.DoesNotExist:
-        raise Http404("Profile not found.")
+       profile_instance = None
     
     completed_trainings_count = CompletedTraining.objects.filter(employee=profile_instance).count()
     if request.method == "POST":
         form = EmployeeProfileForm(request.POST, request.FILES, instance=profile_instance)
         if form.is_valid():
-            form.save() 
+            new_profile = form.save(commit=False)
+            new_profile.user = user_instance  
+            new_profile.save() 
             return redirect('profileview')  
     else:
         form = EmployeeProfileForm(instance=profile_instance)
@@ -93,7 +95,7 @@ def profile_view(request):
         'profile': profile_instance,
         'completed_trainings_count': completed_trainings_count,
         'form': form,
-        'employee_id': profile_instance.id  
+        'employee_id': profile_instance.id if profile_instance else 0 
     }
 
     # Render the profile page with the context
@@ -122,8 +124,6 @@ def training_module_delete(request, pk):
 def training_module_list(request):
     training_modules = TrainingModule.objects.all()
     return render(request, 'Training/training_module_list.html', {'training_modules': training_modules})
-
-
 
 def training_module_detail(request, pk):
     training_module = get_object_or_404(TrainingModule, pk=pk)
@@ -178,6 +178,8 @@ def add_completed_trainings(request):
 
 
 def employee_trainings(request, employee_id):
+    if employee_id == 0:
+        return redirect('profileview')
     employee = get_object_or_404(EmployeeProfile, pk=employee_id)
     completed_trainings = employee.completed_trainings.all()
     completed_trainings_count = employee.count_completed_trainings()
