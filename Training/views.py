@@ -2,7 +2,7 @@ from django.shortcuts import render,redirect,get_object_or_404
 from django.contrib.auth import authenticate,login, logout
 from django.http import HttpResponseRedirect,Http404
 from django.urls import reverse
-from .models import User,EmployeeProfile,EmployeeProfile,CompletedTraining,TrainingModule,Trainingsrequired
+from .models import User,EmployeeProfile,EmployeeProfile,CompletedTraining,TrainingModule,Trainingsrequired,Readdocuments
 from django.db import IntegrityError
 from django.http import JsonResponse
 from .forms import EmployeeProfileForm,CompletedTrainingForm,TrainingModuleForm,TrainingsRequiredForm
@@ -13,11 +13,12 @@ from django.db.models import Q
 from django.core.paginator import Paginator
 import json
 from django.views.decorators.csrf import csrf_exempt
-# Create your views here.
+from django.contrib.auth.decorators import login_required
+# Create your views here. none
 def index(request):
     return render(request,'Training/index.html')
 
-
+@login_required
 def segregation(request):
     profile_instance = get_object_or_404(EmployeeProfile, user=request.user)
     return render(request, 'Training/Layout.html', {'profile': profile_instance})
@@ -81,6 +82,8 @@ def profile_view(request):
        profile_instance = None
     
     completed_trainings_count = CompletedTraining.objects.filter(employee=profile_instance).count()
+    read_modules_count = Readdocuments.objects.filter(employee=profile_instance, read_status=True).count()
+
     if request.method == "POST":
         form = EmployeeProfileForm(request.POST, request.FILES, instance=profile_instance)
         if form.is_valid():
@@ -95,6 +98,7 @@ def profile_view(request):
         'profile': profile_instance,
         'completed_trainings_count': completed_trainings_count,
         'form': form,
+        'read_modules_count': read_modules_count,
         'employee_id': profile_instance.id if profile_instance else 0 
     }
 
@@ -216,36 +220,100 @@ def category_detail(request, category):
         'training_modules': modules
     })
 @csrf_exempt
-def toggle_training_status(request,training_module_id):
+def toggle_training_status(request):
     if request.method == 'POST':
         try:
             data = json.loads(request.body)
             training_module_id = data.get('training_module_id')
-            trainee_id = data.get('trainee_id')
+            employee = request.user.employeeprofile  # Get the employee profile from the logged-in user
 
-            # Fetch the training module and trainee record
-            training = TrainingModule.objects.get(id=training_module_id, trainee__id=trainee_id)
+            # Try to get the existing Readdocuments instance
+            try:
+                readdocument = Readdocuments.objects.get(
+                    employee=employee,
+                    training_module_id=training_module_id
+                )
 
-            # Toggle the completion status
-            training.is_completed = not training.is_completed
-            training.save()
+                # Toggle the read_status
+                readdocument.read_status = not readdocument.read_status
+                readdocument.save()
+
+            except Readdocuments.DoesNotExist:
+                # If no Readdocuments record exists, create a new one with read_status=False (Unread)
+                readdocument = Readdocuments(
+                    employee=employee,
+                    training_module_id=training_module_id,
+                    read_status=False  # Default to unread
+                )
+                readdocument.save()
+
+            # Count how many training modules have been marked as "read" by the employee
+            completed_count = Readdocuments.objects.filter(
+                employee=employee,
+                read_status=True
+            ).count()
 
             return JsonResponse({
                 'success': True,
-                'is_completed': training.is_completed,
-                'message': f"Training status updated to {'Complete' if training.is_completed else 'Incomplete'}."
-            })
-        except TrainingModule.DoesNotExist:
-            return JsonResponse({
-                'success': False,
-                'message': 'Training module not found.'
-            })
-        except Exception as e:
-            return JsonResponse({
-                'success': False,
-                'message': str(e),
+                'new_status': readdocument.read_status,
+                'completed_count': completed_count,
             })
 
+        except Exception as e:
+            return JsonResponse({'success': False, 'error': str(e)}, status=500)
+
+    return JsonResponse({'success': False, 'error': 'Invalid request method.'}, status=400)
+def get_training_status(request, training_module_id):
+    try:
+        employee = request.user.employeeprofile
+        read_status = Readdocuments.objects.get(
+            employee=employee,
+            training_module_id=training_module_id
+        ).read_status
+        return JsonResponse({
+            'success': True,
+            'read_status': read_status,
+        })
+    except Readdocuments.DoesNotExist:
+        # If no record exists, assume the read_status is False
+        return JsonResponse({
+            'success': True,
+            'read_status': False,
+        })
+    
 def search(request):
     query = request.GET.get('q')
     results = []
+    if query:
+        # Search in Profile, TrainingModule,Exam,TrainingDocuments
+        profile_results = EmployeeProfile.objects.filter(
+            Q(name__icontains=query) | 
+            Q(staffnumber__icontains=query) | 
+            Q(designation__icontains=query)
+        )
+        for profile in profile_results:
+            results.append({
+                'type': 'Profile',
+                'name': profile.name,
+                'description': profile.designation,
+                'url': profile.get_absolute_url(), 
+            })
+
+    
+        module_results = TrainingModule.objects.filter(
+            Q(title__icontains=query) |
+            Q(description__icontains=query) |
+            Q(code__icontains=query)
+        )
+        for module in module_results:
+            results.append({
+                'type': 'Training Module',
+                'name': module.title,
+                'description': module.description,
+                'url': module.get_absolute_url(),  
+            })
+    context = {
+        'query': query,
+        'results': results,
+    }
+    return render(request, 'Training/index.html', context)

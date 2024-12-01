@@ -21,9 +21,13 @@
         <p>This file type is not supported for preview. <a href="{{ training_module.file.url }}">Click here to view and download the file.</a></p>
     {% endif %}
 </div>
-<input type="hidden" id="training_module_id" value="{{ training_module.id }}">
-<input type="hidden" id="employee_id" value="{{ user.id }}">
-<button id="submit-button" type="button">Mark Module Complete</button>
-    
+<input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+<button id="toggle-status-btn" data-id="{{ training_module.id }}" data-status="{{ read_status }}">
+    {% if read_status %}
+        Mark as Unread
+    {% else %}
+        Mark as Read
+    {% endif %}
+</button>
 <div id="message" style="display:none;"></div>
 {% endblock %}

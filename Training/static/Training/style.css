@@ -37,14 +37,35 @@ body {
 .navlink, .nav {
     margin: left 100px;
     display: flex;
-    justify-content: center; /* Center nav links horizontally */
+    flex-wrap: wrap;
+    justify-content: center;
     list-style-type: none;
     padding: 0;
 }
+
 .navlink li, .nav li {
     margin-right:20px;
     margin-left: 5px;
     color: #111211;
+}
+.btn {
+    background-color: #39dca3;
+    color: #fff;
+    padding: 10px 20px;
+    font-size: 16px;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.other.navlink a {
+    text-decoration: none;
+    margin-right: 10px;
+}
+.other.navlink a:hover .btn {
+    background-color: #2fa788;
+    
 }
 .profile-box {
     display: flex;
@@ -52,14 +73,6 @@ body {
     margin: bottom 20px;
     margin-right: 0
 }
-/* .profile-info img {
-    border-image: url(border.png) 25 25 round;
-    width: 150px;
-    height: 150px;
-    border-radius:300px;
-    border-color: aqua;
-    margin-bottom: 5px;
-} */
 .css-border img {
     border: 4px solid #39dca3;
     padding: 2px;

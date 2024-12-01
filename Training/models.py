@@ -16,15 +16,18 @@ class EmployeeProfile(models.Model):
     designation=models.CharField(max_length=100,default="Technician")
     Facility=models.CharField(max_length=100)
     profile_pic = models.ImageField(upload_to='Training/profile_pics', blank=True, null=True)
-    required_trainings = models.ForeignKey('TrainingsRequired', on_delete=models.CASCADE, null=True, blank=True)  
+    required_trainings = models.ForeignKey('TrainingsRequired', on_delete=models.CASCADE, null=True, blank=True) 
+
     def is_manager(self):
-        return any(keyword in self.designation.lower() for keyword in ['manager', 'reporting', 'Training Officer'])
+        # Check if any of the keywords exist in the designation (case-insensitive)
+        return any(keyword in self.designation.lower() for keyword in ['manager', 'safety', 'training'])
+
     def is_reporting(self):
-        return self.designation.lower() == 'Training Officer'
+        # Check if designation contains "Training Officer" (case-insensitive)
+        return 'reporting officer' in self.designation.lower()
 
     def __str__(self):
-      return f"{self.staff_number} - {self.name} {self.required_trainings}"
-
+        return f"{self.staff_number} - {self.name} {self.required_trainings}"
     def count_completed_trainings(self):
         """Returns the count of completed trainings employee."""
         return self.completed_trainings.filter(date_completed__isnull=False).count()
@@ -50,6 +53,8 @@ class TrainingModule(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     total_pages = models.IntegerField(default=0)
+    
+    
 
     def __str__(self):
         return self.title
@@ -68,7 +73,6 @@ class CompletedTraining(models.Model):
     employee = models.ForeignKey('EmployeeProfile', on_delete=models.CASCADE, related_name='completed_trainings')
     training_module = models.ForeignKey('TrainingModule', on_delete=models.CASCADE, related_name='completed_by_profiles')
     date_completed = models.DateTimeField(default=timezone.now)
-
     @property
     def date_of_expiry(self):
         """Return the expiry date as 2 years after the date completed."""
@@ -87,4 +91,15 @@ class Trainingsrequired(models.Model):
 
     def __str__(self):
         return f"Facility: {self.facility} - Required Trainings: {self.Required_Module_trainings}"
-    
+
+class Readdocuments(models.Model):
+    employee = models.ForeignKey('EmployeeProfile', on_delete=models.CASCADE, related_name='completed_trainings_readdocuments')
+    training_module = models.ForeignKey('TrainingModule', on_delete=models.CASCADE, related_name='completed_by_profiles_readdocuments')
+    date_completed = models.DateTimeField(default=timezone.now)
+    read_status = models.BooleanField(default=False) 
+
+    class Meta:
+        unique_together = ('employee', 'training_module')  # Ensures no duplicate entries for the same employee and training module
+
+    def __str__(self):
+        return f"{self.employee.name} - {self.training_module.title}"

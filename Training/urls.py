@@ -3,6 +3,7 @@ from django.conf.urls.static import static
 from Training import views
 urlpatterns = [
     path("",views.index,name="index"),
+    path('search/', views.search, name='search'),
     path("login",views.login_view, name="login"),
     path("Register",views.register,name="register"),
     path("logout",views.logout_view, name="logout"),
@@ -18,6 +19,7 @@ urlpatterns = [
     path('employee/<int:employee_id>/', views.employee_trainings, name='employee_trainings'),
     path('categories/',views.category_list, name='category_list'),
     path('category/<str:category>/', views.category_detail, name='category_detail'),
-    path('training-modules/<int:training_module_id>/toggle-training-status/',views.toggle_training_status, name='toggle_training_status'),
+   path('toggle-training-status/', views.toggle_training_status, name='toggle_training_status'),
+   path('get-training-status/<int:training_module_id>/', views.get_training_status, name='get_training_status'),
 
 ]
