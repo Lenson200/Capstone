@@ -1,17 +1,7 @@
 document.addEventListener('DOMContentLoaded', function() {
-    const searchForm = document.querySelector('#search-form');
-    const searchInput = searchForm.querySelector('input[name="q"]');
-    const resultsContainer = document.querySelector('.results');
     const toggleButton = document.getElementById('toggle-status-btn');
 
-    if (searchInput) {
-        searchInput.addEventListener('input', () => {
-            if (searchInput.value.trim() === '') {
-                // Clear search results when input is empty
-                resultsContainer.innerHTML = '';
-            }
-        });
-    }
+    
 
     if (toggleButton) {
         const trainingModuleId = toggleButton.getAttribute('data-id');

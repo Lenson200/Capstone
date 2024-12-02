@@ -282,13 +282,13 @@ def get_training_status(request, training_module_id):
         })
     
 def search(request):
-    query = request.GET.get('q')
+    query = request.GET.get('q', '').strip()
     results = []
     if query:
         # Search in Profile, TrainingModule,Exam,TrainingDocuments
         profile_results = EmployeeProfile.objects.filter(
             Q(name__icontains=query) | 
-            Q(staffnumber__icontains=query) | 
+            Q(staff_number__icontains=query) | 
             Q(designation__icontains=query)
         )
         for profile in profile_results:
@@ -312,6 +312,9 @@ def search(request):
                 'description': module.description,
                 'url': module.get_absolute_url(),  
             })
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+          return JsonResponse({'results': results}, safe=False)
+    
     context = {
         'query': query,
         'results': results,

@@ -39,6 +39,9 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
     }
+    if (!showFormButton) {
+        return;
+    }
     showFormButton.addEventListener('click', () => {
         showFormButton.style.display = 'none'; 
         profileForm.style.display = 'block'; 
@@ -50,11 +53,6 @@ document.addEventListener('DOMContentLoaded', () => {
             profileForm.style.display = 'none'; 
             showFormButton.style.display = 'block'; 
         }, 100);
-    });
-    
-   
-
-
-   
+    });   
 });
    

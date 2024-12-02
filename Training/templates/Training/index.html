@@ -1,12 +1,16 @@
 {% extends 'Training/Layout.html' %}
 {% load static %}
 {% block body %}
-<div class="search-wrapper">
-    <div id="form-container">
-        <form id="search-form" action="#">
-            <input type="text" name="q" class="search-bar" placeholder="Search for modules" autocomplete="off">
-            <button type="submit" style="display:none;">Search</button>
-        </form>
-   
- 
+<form id="search-form" action="{% url 'search' %}" method="get">
+    <input type="text" name="q" class="search-bar" placeholder="Search for modules,trainees etc.." autocomplete="off">
+    <button type="submit" style="display:none;">Search</button>
+</form>
+<div class="results">
+                <div class="result-item">
+                    <a href="{{ result.url }}" class="result-item">
+                        <strong>{{ result.type }}:</strong> {{ result.name }} - {{ result.description }}
+                    </a>
+                </div>
+           
+</div>
 {% endblock %}

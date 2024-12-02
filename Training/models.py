@@ -31,7 +31,6 @@ class EmployeeProfile(models.Model):
     def count_completed_trainings(self):
         """Returns the count of completed trainings employee."""
         return self.completed_trainings.filter(date_completed__isnull=False).count()
-   
     
     def save(self, *args, **kwargs):
         # Automatically update required trainings based on Facility
@@ -42,6 +41,8 @@ class EmployeeProfile(models.Model):
             self.required_trainings = None
 
         super().save(*args, **kwargs)
+    def get_absolute_url(self):
+        return reverse('employee_trainings',args=[str(self.pk)])
         
 class TrainingModule(models.Model):
     title = models.CharField(max_length=200)
