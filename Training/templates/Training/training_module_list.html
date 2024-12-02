@@ -37,8 +37,10 @@
                 <td>{{ module.created_at }}</td>
                 <td>{{ module.total_pages }}</td>
                 <td>
+                    {% if profile.is_manager %}
                     <a href="{% url 'training_module_delete' module.pk %}">Delete</a>
                     <a href="{% url 'addmodules' %}">Add Module</a>
+                    {% endif %}
                     <a href="{% url 'training_module_detail' module.pk %}">View Details</a>
                 </td>
             </tr>
