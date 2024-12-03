@@ -19,11 +19,10 @@ class EmployeeProfile(models.Model):
     required_trainings = models.ForeignKey('TrainingsRequired', on_delete=models.CASCADE, null=True, blank=True) 
 
     def is_manager(self):
-        # Check if any of the keywords exist in the designation (case-insensitive)
+        # Checks if any of the keywords exist in the designation (case-insensitive)
         return any(keyword in self.designation.lower() for keyword in ['manager', 'safety', 'training'])
 
     def is_reporting(self):
-        # Check if designation contains "Training Officer" (case-insensitive)
         return 'reporting officer' in self.designation.lower()
 
     def __str__(self):
@@ -33,7 +32,6 @@ class EmployeeProfile(models.Model):
         return self.completed_trainings.filter(date_completed__isnull=False).count()
     
     def save(self, *args, **kwargs):
-        # Automatically update required trainings based on Facility
         try:
             required_training = Trainingsrequired.objects.get(facility=self.Facility)
             self.required_trainings = required_training
@@ -100,7 +98,7 @@ class Readdocuments(models.Model):
     read_status = models.BooleanField(default=False) 
 
     class Meta:
-        unique_together = ('employee', 'training_module')  # Ensures no duplicate entries for the same employee and training module
+        unique_together = ('employee', 'training_module')
 
     def __str__(self):
         return f"{self.employee.name} - {self.training_module.title}"

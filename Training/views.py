@@ -8,7 +8,6 @@ from django.http import JsonResponse
 from .forms import EmployeeProfileForm,CompletedTrainingForm,TrainingModuleForm,TrainingsRequiredForm
 from PyPDF2 import PdfReader
 import os
-from django.template.loader import render_to_string
 from django.db.models import Q
 from django.core.paginator import Paginator
 import json
@@ -105,7 +104,8 @@ def profile_view(request):
     # Render the profile page with the context
     return render(request, 'Training/profile.html', context)
 
-
+#######################################Module creation,Deleteion,displaying and handling #####################
+@login_required
 def training_module_create(request):
     if request.method == 'POST':
         form = TrainingModuleForm(request.POST, request.FILES)
@@ -146,7 +146,7 @@ def training_module_detail(request, pk):
         'training_module': training_module,
         'page_range': range(1, training_module.total_pages + 1) if training_module.total_pages else None
     })
-
+@login_required
 def add_completed_trainings(request):
     if request.method == 'POST':
         form = CompletedTrainingForm(request.POST)
@@ -160,7 +160,7 @@ def add_completed_trainings(request):
             ).first()
 
             if completed_training:
-                # Update the existing record
+                # Update the existing record 
                 completed_training.date_completed = date_completed
                 completed_training.save()
                 form.add_error(
@@ -194,7 +194,7 @@ def employee_trainings(request, employee_id):
         'completed_trainings': completed_trainings,
 
         })
-
+@login_required
 def update_trainings_required(request):
     if request.method == 'POST':
         form = TrainingsRequiredForm(request.POST)
@@ -206,9 +206,7 @@ def update_trainings_required(request):
 
     return render(request, 'Training/update_trainings_required.html', {'form': form})
 
-def view_completed_trainings(request):
-    employees=EmployeeProfile.objects.all().order_by('staff_number')
-    return render(request, 'Training/staff_completed_trainings.html', {'employees': employees})
+#display a list of all available categories
 def category_list(request):
     categories = TrainingModule.objects.values_list('category', flat=True).distinct()
     return render(request, 'Training/categories.html', {'categories': categories})
@@ -225,25 +223,23 @@ def toggle_training_status(request):
         try:
             data = json.loads(request.body)
             training_module_id = data.get('training_module_id')
-            employee = request.user.employeeprofile  # Get the employee profile from the logged-in user
+            employee = request.user.employeeprofile 
 
-            # Try to get the existing Readdocuments instance
+            
             try:
                 readdocument = Readdocuments.objects.get(
                     employee=employee,
                     training_module_id=training_module_id
                 )
-
-                # Toggle the read_status
                 readdocument.read_status = not readdocument.read_status
                 readdocument.save()
 
             except Readdocuments.DoesNotExist:
-                # If no Readdocuments record exists, create a new one with read_status=False (Unread)
+    
                 readdocument = Readdocuments(
                     employee=employee,
                     training_module_id=training_module_id,
-                    read_status=False  # Default to unread
+                    read_status=False  
                 )
                 readdocument.save()
 
@@ -281,11 +277,16 @@ def get_training_status(request, training_module_id):
             'read_status': False,
         })
     
+
+    
+def view_completed_trainings(request):
+    employees=EmployeeProfile.objects.all().order_by('staff_number')
+    return render(request, 'Training/staff_completed_trainings.html', {'employees': employees})   
 def search(request):
     query = request.GET.get('q', '').strip()
     results = []
     if query:
-        # Search in Profile, TrainingModule,Exam,TrainingDocuments
+        # Search in Profile, TrainingModule
         profile_results = EmployeeProfile.objects.filter(
             Q(name__icontains=query) | 
             Q(staff_number__icontains=query) | 

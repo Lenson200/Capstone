@@ -37,7 +37,7 @@ document.addEventListener('DOMContentLoaded', function () {
         })
         .then(data => {
             if (data.results.length > 0) {
-                resultsContainer.classList.add('active'); // Show results
+                resultsContainer.classList.add('active');
                 data.results.forEach(result => {
                     const item = document.createElement('div');
                     item.className = 'result-item';
@@ -50,13 +50,13 @@ document.addEventListener('DOMContentLoaded', function () {
                 });
                 
             } else {
-                resultsContainer.classList.add('active'); // Show message
+                resultsContainer.classList.add('active'); 
                 resultsContainer.innerHTML = '<p>No results found.</p>';
             }
         })
         .catch(error => {
             console.error('Error:', error);
-            resultsContainer.classList.add('active'); // Show error message
+            resultsContainer.classList.add('active');
             resultsContainer.innerHTML = '<p>Error processing your request. Please try again.</p>';
         });
     });

@@ -1,3 +1,4 @@
+/* Css for the whole project */
 body {
     font-family: Arial, sans-serif;
     line-height: 1.6;
@@ -8,7 +9,7 @@ body {
     font-size: 1rem; 
 }
 
-
+/* Styling header an the navigation bar*/
 .header {
     color: #333; 
     background-color: rgba(227, 222, 222, 0.808);
@@ -18,7 +19,7 @@ body {
     align-items: center;
     border-radius: 5px;
 }
-
+/* Styling  navigation links*/
 .navlink, .nav {
     margin: left 100px;
     display: flex;
@@ -257,6 +258,7 @@ td {
     font-size: 16px;
     box-sizing: border-box;
 }
+/* Styling  results for swift reaponsive design*/
 .results {
     display: none; 
     position: relative;
@@ -279,7 +281,7 @@ td {
 /* Responsive adjustments */
 @media (max-width: 768px) {
     .results {
-        max-height: 300px; /* Smaller height for smaller screens */
+        max-height: 300px; 
         padding: 5px;
         font-size: 14px;
     }
@@ -314,7 +316,7 @@ ul {
     border-radius: 25px;
     transition: background-color 0.3s ease, transform 0.2s ease;
 }
-
+/* Styling  categories list*/
 .category-list li a {
     text-decoration: none;
     color: #333;
@@ -369,8 +371,6 @@ ul {
 .module-list li a:hover {
     color: #005f73;
 }
-
-/* Empty state message */
 .module-list p {
     font-style: italic;
     color: #888;

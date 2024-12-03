@@ -22,12 +22,15 @@
     {% endif %}
 </div>
 <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+{% if profile %}
 <button id="toggle-status-btn" data-id="{{ training_module.id }}" data-status="{{ read_status }}">
+    
     {% if read_status %}
         Mark as Unread
     {% else %}
         Mark as Read
     {% endif %}
 </button>
+{% endif %}
 <div id="message" style="display:none;"></div>
 {% endblock %}
