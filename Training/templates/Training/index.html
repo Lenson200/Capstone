@@ -1,10 +1,12 @@
 {% extends 'Training/Layout.html' %}
 {% load static %}
 {% block body %}
+{% if user.is_authenticated %}
 <form id="search-form" action="{% url 'search' %}" method="get">
     <input type="text" name="q" class="search-bar" placeholder="Search for modules,trainees etc.." autocomplete="off">
     <button type="submit" style="display:none;">Search</button>
 </form>
+
 <div class="results">
                 <div class="result-item">
                     <a href="{{ result.url }}" class="result-item">
@@ -13,4 +15,6 @@
                 </div>
            
 </div>
+{% endif %}
+
 {% endblock %}
